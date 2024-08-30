@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import VisemeDisplay from "./components/VisemeDisplay";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [textToSpeak, setTextToSpeak] = useState("");
+
+    useEffect(() => {
+        const handleSpeakTextEvent = (event) => {
+            setTextToSpeak(event.detail);
+        };
+
+        window.addEventListener('speakText', handleSpeakTextEvent);
+
+        return () => {
+            window.removeEventListener('speakText', handleSpeakTextEvent);
+        };
+    }, []);
+
+    return (
+        <div>
+            <VisemeDisplay text={textToSpeak} />
+        </div>
+    );
 }
 
 export default App;
