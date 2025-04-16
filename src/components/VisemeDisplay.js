@@ -1,134 +1,114 @@
-import React, { useState, useEffect } from "react";
-import avatarImage from "../AvatarImages/1.png";
+import React, { useState, useEffect, useRef } from "react";
+import cartoonAvatarVideo from "../AvatarImages/cartoonAvatar.png";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-
-import viseme_id_0 from "../../src/visemes/viseme_id_0.svg";
-import viseme_id_1 from "../../src/visemes/viseme_id_1.svg";
-import viseme_id_2 from "../../src/visemes/viseme_id_2.svg";
-import viseme_id_3 from "../../src/visemes/viseme_id_3.svg";
-import viseme_id_4 from "../../src/visemes/viseme_id_4.svg";
-import viseme_id_5 from "../../src/visemes/viseme_id_5.svg";
-import viseme_id_6 from "../../src/visemes/viseme_id_6.svg";
-import viseme_id_7 from "../../src/visemes/viseme_id_7.svg";
-import viseme_id_8 from "../../src/visemes/viseme_id_8.svg";
-import viseme_id_9 from "../../src/visemes/viseme_id_9.svg";
-import viseme_id_10 from "../../src/visemes/viseme_id_10.svg";
-import viseme_id_11 from "../../src/visemes/viseme_id_11.svg";
-import viseme_id_12 from "../../src/visemes/viseme_id_12.svg";
-import viseme_id_13 from "../../src/visemes/viseme_id_13.svg";
-import viseme_id_14 from "../../src/visemes/viseme_id_14.svg";
-import viseme_id_15 from "../../src/visemes/viseme_id_15.svg";
-import viseme_id_16 from "../../src/visemes/viseme_id_16.svg";
-import viseme_id_17 from "../../src/visemes/viseme_id_17.svg";
-import viseme_id_18 from "../../src/visemes/viseme_id_18.svg";
-import viseme_id_19 from "../../src/visemes/viseme_id_19.svg";
-import viseme_id_20 from "../../src/visemes/viseme_id_20.svg";
-import viseme_id_21 from "../../src/visemes/viseme_id_21.svg";
-
-const config = require("../config.json");
-
-const visemeImages = {
-    0: viseme_id_0,
-    1: viseme_id_1,
-    2: viseme_id_2,
-    3: viseme_id_3,
-    4: viseme_id_4,
-    5: viseme_id_5,
-    6: viseme_id_6,
-    7: viseme_id_7,
-    8: viseme_id_8,
-    9: viseme_id_9,
-    10: viseme_id_10,
-    11: viseme_id_11,
-    12: viseme_id_12,
-    13: viseme_id_13,
-    14: viseme_id_14,
-    15: viseme_id_15,
-    16: viseme_id_16,
-    17: viseme_id_17,
-    18: viseme_id_18,
-    19: viseme_id_19,
-    20: viseme_id_20,
-    21: viseme_id_21,
-};
+import { config } from "../config";
+import { cartoonVisemes } from "../visemes/cartoonVisemes";
+import "./VisemeDisplay.css";
 
 const VisemeDisplay = ({ text }) => {
     const [imageIndex, setImageIndex] = useState(0);
+    const [isVisemesActive, setIsVisemesActive] = useState(false);
+    const synthesizerRef = useRef(null);
+    const timeoutsRef = useRef([]);
 
     useEffect(() => {
         if (text) {
+            cleanup();
             handleVisemes(text);
         }
     }, [text]);
 
-    function handleVisemes(text) {
-        const speechConfig = sdk.SpeechConfig.fromSubscription(
-            config.SpeechKey,
-            config.SpeechRegion
-        );
-        const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();  // Ensure audio plays through the default speakers
-        const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-        let visemesArr = [];
+    const cleanup = () => {
+        // Clear all active viseme timeouts
+        timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+        timeoutsRef.current = [];
 
-        synthesizer.visemeReceived = function (s, e) {
-            visemesArr.push(e);
-        };
+        // Stop synthesizer if running
+        if (synthesizerRef.current) {
+            synthesizerRef.current.close();
+            synthesizerRef.current = null;
+        }
 
-        synthesizer.speakTextAsync(
-            text,
-            (result) => {
-                if (result.errorDetails) {
-                    console.error(result.errorDetails);
-                } else {
-                    visemesArr.forEach((e) => {
-                        const duration = e.audioOffset / 10000;
-                        setTimeout(() => {
-                            setImageIndex(e.visemeId);
-                        }, duration);
-                    });
+        setIsVisemesActive(false);
+    };
+
+    useEffect(() => {
+        return () => cleanup();
+    }, []);
+
+    const handleVisemes = (text) => {
+        try {
+            const speechConfig = sdk.SpeechConfig.fromSubscription(
+                config.SpeechKey,
+                config.SpeechRegion
+            );
+
+            speechConfig.setProperty("SpeechServiceConnection_ReconnectOnError", "1");
+            speechConfig.setProperty("SpeechServiceConnection_InitialSilenceTimeoutMs", "5000");
+
+            const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
+
+            synthesizerRef.current = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
+            let visemesArr = [];
+
+            synthesizerRef.current.visemeReceived = function (s, e) {
+                console.log('Viseme received:', e.visemeId);
+                visemesArr.push(e);
+            };
+
+            synthesizerRef.current.speakTextAsync(
+                text,
+                (result) => {
+                    if (result.errorDetails) {
+                        console.error('Speech synthesis error:', result.errorDetails);
+                    } else {
+                        console.log('Speech synthesis successful, processing visemes');
+                        setIsVisemesActive(true);
+
+                        visemesArr.forEach((e) => {
+                            const duration = e.audioOffset / 10000;
+                            const timeout = setTimeout(() => {
+                                setImageIndex(e.visemeId);
+                            }, duration);
+                            timeoutsRef.current.push(timeout);
+                        });
+
+                        const lastViseme = visemesArr[visemesArr.length - 1];
+                        if (lastViseme) {
+                            const finalTimeout = setTimeout(() => {
+                                setIsVisemesActive(false);
+                            }, (lastViseme.audioOffset / 10000) + 500);
+                            timeoutsRef.current.push(finalTimeout);
+                        }
+                    }
+                },
+                (error) => {
+                    console.error('Speech synthesis error:', error);
+                    cleanup();
                 }
-
-                visemesArr = [];
-                synthesizer.close();
-            },
-            (error) => {
-                console.error(error);
-                visemesArr = [];
-                synthesizer.close();
-            }
-        );
-    }
+            );
+        } catch (error) {
+            console.error('Error initializing speech synthesis:', error);
+            cleanup();
+        }
+    };
 
     return (
-        <div
-            style={{
-                position: "relative",
-                width: "150px",
-                height: "150px",
-                margin: "0 auto",
-            }}
-        >
-            <img
-                src={avatarImage}
-                alt="Avatar"
-                style={{
-                    width: "100%",
-                    height: "auto",
-                    display: "block",
-                }}
-            />
-            <img
-                src={visemeImages[imageIndex] || visemeImages[0]}
-                alt="Viseme"
-                style={{
-                    position: "absolute",
-                    top: "67%",
-                    left: "49.5%",
-                    transform: "translate(-50%, -50%)",
-                    width: "40px",
-                    height: "40px",
-                }}
-            />
+        <div className="faces-container">
+            <div className="face-container cartoon-face">
+                <div className="avatar-wrapper">
+                    <img
+                        src={cartoonAvatarVideo}
+                        alt="Cartoon Avatar"
+                        className="avatar-base"
+                    />
+                    <img
+                        src={cartoonVisemes[imageIndex] || cartoonVisemes[0]}
+                        alt="Cartoon Viseme"
+                        className={`viseme-image cartoon-viseme ${isVisemesActive ? 'animate' : ''}`}
+                    />
+                </div>
+            </div>
         </div>
     );
 };

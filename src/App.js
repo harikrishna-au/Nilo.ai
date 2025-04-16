@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from "react";
 import VisemeDisplay from "./components/VisemeDisplay";
+import ErrorBoundary from "./components/ErrorBoundary";
+import "./App.css";
 
 function App() {
     const [textToSpeak, setTextToSpeak] = useState("");
 
     useEffect(() => {
         const handleSpeakTextEvent = (event) => {
-            setTextToSpeak(event.detail);
+            console.log('Received speakText event:', event.detail);
+            const text = event.detail?.trim();
+            if (text) {
+                setTextToSpeak(text);
+            }
         };
 
         window.addEventListener('speakText', handleSpeakTextEvent);
-
-        return () => {
-            window.removeEventListener('speakText', handleSpeakTextEvent);
-        };
+        return () => window.removeEventListener('speakText', handleSpeakTextEvent);
     }, []);
 
     return (
-        <div>
-            <VisemeDisplay text={textToSpeak} />
+        <div className="app-container">
+            <ErrorBoundary>
+                <main className="main-content">
+                    <VisemeDisplay text={textToSpeak} />
+                </main>
+            </ErrorBoundary>
         </div>
     );
 }

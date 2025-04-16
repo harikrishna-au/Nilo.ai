@@ -1,0 +1,346 @@
+.faces-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%; /* Changed from 1200px to full width */
+    margin: 0 auto;
+    padding: 20px;
+    gap: 40px;
+}
+
+/* VisemeDisplay.css */
+
+@keyframes wobbleFollow {
+    0% { transform: translate(-50%, -50%); }
+    100% { transform: translate(-50%, -50%); }
+}
+
+@keyframes mouthMovement {
+    0% { transform: translate(-50%, -50%); }
+    100% { transform: translate(-50%, -50%); }
+}
+
+.face-container {
+    flex: 1;
+    max-width: 800px; /* Increased from 500px */
+    text-align: center;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.face-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding-bottom: 100%; /* Maintains 1:1 aspect ratio */
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+/* Make the video and images larger */
+.avatar-base {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.viseme-image {
+    position: absolute;
+    transition: transform 0.3s ease-out;
+}
+
+.real-viseme {
+    top: 40%;
+    width: 50%;
+    height: auto;
+}
+
+.cartoon-viseme {
+    position: absolute;
+    top: 75%;  /* Position it lower on the face */
+    left: 50%;  /* Center horizontally */
+    width: 50%;  /* Make it occupy half the width */
+    height: auto;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+/* Remove any animation classes */
+.cartoon-viseme.animate {
+    animation: none;
+}
+
+/* Remove any wobble or mouth movement animations */
+@keyframes wobbleFollow {
+    0% { transform: translate(-50%, -50%); }
+    100% { transform: translate(-50%, -50%); }
+}
+
+@keyframes mouthMovement {
+    0% { transform: translate(-50%, -50%); }
+    100% { transform: translate(-50%, -50%); }
+}
+
+/* Optional: Add a class for when the video is actively playing */
+.video-playing .cartoon-viseme {
+    animation: mouthMovement 4s linear infinite;
+}
+
+/* Optional: Add a class for when the video is paused */
+.video-paused .cartoon-viseme {
+    animation-play-state: paused;
+}
+
+/* Optional: Add alignment grid for development */
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    
+    /* Uncomment during development to show alignment grid */
+    /*
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        z-index: 1;
+    }
+    */
+}
+
+/* Debugging tools - add these classes as needed */
+.show-alignment-guides .cartoon-viseme {
+    outline: 2px solid red;
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+.show-reference-points .cartoon-viseme::before,
+.show-reference-points .cartoon-viseme::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: blue;
+    top: 50%;
+    left: 50%;
+}
+
+
+/* Hover effects */
+.face-container:hover {
+    transform: translateY(-5px);
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.7;
+}
+
+/* Responsive design */
+@media (min-width: 1024px) {
+    .faces-container {
+        padding: 20px;
+        gap: 40px;
+    }
+
+    .face-container {
+        min-width: 600px; /* Minimum width for larger screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .faces-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .face-container {
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 30px;
+    }
+
+    .face-container h2 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Optional: Add these classes to your avatar image to split it into regions */
+.face-region {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.upper-face {
+    clip-path: polygon(0 0, 100% 0, 100% 60%, 0 60%);
+}
+
+.lower-face {
+    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.speaking {
+    animation: pulse 1s infinite ease-in-out;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    padding: 10px;
+}
+
+.avatar-base.playing {
+    opacity: 1;
+}
+
+.avatar-base:not(.playing) {
+    opacity: 0.95;
+}
+
+video.avatar-base {
+    transition: opacity 0.3s ease;
+}
+
+/* Add these new styles to your existing CSS */
+
+.position-controls {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.controls-row {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.position-button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.position-button:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+}
+
+.position-button:active {
+    background: #e0e0e0;
+    transform: scale(0.95);
+}
+
+.reset-button {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.reset-button:hover {
+    background: #ff6b81;
+}
+
+.position-value {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.viseme-image {
+    position: absolute;
+    left: 50%;
+    transform: translate(calc(-50% + var(--offset-x, 0px)), 
+                        calc(-50% + var(--offset-y, 0px)));
+    transition: all 0.1s ease-in-out;
+}
+
+.viseme-image.cartoon-viseme {
+    position: absolute;
+    top:47%; /* Adjust as needed to position the mouth */
+    left: 49%; /* Adjust as needed to position the mouth */
+    transform: translate(-50%, -50%);
+    width: 20%; /* Adjust size as needed */
+    height: auto;
+    z-index: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
