@@ -103,8 +103,8 @@ const VisemeDisplay = ({ text }) => {
         <div
             style={{
                 position: "relative",
-                width: "150px",
-                height: "150px",
+                width: "300px",  // Increased from 150px
+                height: "300px", // Increased from 150px
                 margin: "0 auto",
             }}
         >
@@ -125,8 +125,8 @@ const VisemeDisplay = ({ text }) => {
                     top: "67%",
                     left: "49.5%",
                     transform: "translate(-50%, -50%)",
-                    width: "40px",
-                    height: "40px",
+                    width: "80px",    // Increased from 40px
+                    height: "80px",   // Increased from 40px
                 }}
             />
         </div>
