@@ -1,12 +1,10 @@
 .faces-container {
     display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    max-width: 100%; /* Changed from 1200px to full width */
-    margin: 0 auto;
-    padding: 20px;
-    gap: 40px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 /* VisemeDisplay.css */
@@ -22,14 +20,14 @@
 }
 
 .face-container {
-    flex: 1;
-    max-width: 800px; /* Increased from 500px */
-    text-align: center;
+    position: relative;
+    width: 100%;
+    max-width: 600px; /* Desktop default */
+    aspect-ratio: 1; /* Maintain square ratio */
+    margin: 0 auto;
     background: #ffffff;
     border-radius: 15px;
-    padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
 }
 
 .face-container h2 {
@@ -40,45 +38,113 @@
 
 .avatar-wrapper {
     position: relative;
-    display: inline-block;
-    width: 100%;
-    padding-bottom: 100%; /* Maintains 1:1 aspect ratio */
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-/* Make the video and images larger */
-.avatar-base {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Split the avatar into regions */
+.face-region {
+    position: absolute;
     width: 100%;
-    height: auto;
-    display: block;
+    height: 100%;
 }
 
-.viseme-image {
-    position: absolute;
-    transition: transform 0.3s ease-out;
+.upper-face {
+    top: 0;
+    height: 40%;
+    clip-path: polygon(25% 0%, 75% 0%, 75% 100%, 25% 100%);
 }
 
-.real-viseme {
+.lower-face {
     top: 40%;
-    width: 50%;
-    height: auto;
+    height: 30%;
+    clip-path: polygon(30% 0%, 70% 0%, 75% 100%, 25% 100%);
+    transition: transform 0.3s ease;
 }
 
-.cartoon-viseme {
+/* Base avatar image */
+.avatar-base {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+}
+
+/* Compressed state for lower face only */
+.viseme-compressed .lower-face {
+    transform: scaleX(0.95) translateY(-2%);
+}
+
+.viseme-image.cartoon-viseme {
     position: absolute;
-    top: 75%;  /* Position it lower on the face */
-    left: 50%;  /* Center horizontally */
-    width: 50%;  /* Make it occupy half the width */
-    height: auto;
+    top: 47%;
+    left: 49%;
     transform: translate(-50%, -50%);
+    width:20%; /* Smaller base width that works well across all devices */
+    height: auto;
     z-index: 2;
+}
+
+/* Container adjustments only */
+@media screen and (max-width: 1024px) {
+    .face-container {
+        max-width: 500px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .face-container {
+        max-width: 400px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .face-container {
+        max-width: 300px;
+    }
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .face-container {
+        max-width: 90vw;
+    }
+}
+
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .face-container {
+        max-width: 50vh;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .face-container {
+        max-width: 250px;
+    }
+}
+
+@media screen and (min-width: 1440px) {
+    .face-container {
+        max-width: 700px;
+    }
+}
+
+/* Override any inherited or conflicting styles */
+.viseme-image.cartoon-viseme {
+    width: 15% !important; /* Force consistent size */
+}
+
+/* Cheek compression animation */
+@keyframes cheekCompress {
+    0% { transform: scaleX(1) translateY(0); }
+    50% { transform: scaleX(0.95) translateY(-2%); }
+    100% { transform: scaleX(1) translateY(0); }
+}
+
+.cheek-animation {
+    animation: cheekCompress 0.3s ease-in-out;
 }
 
 /* Remove any animation classes */
@@ -203,9 +269,9 @@
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
+    100% { transform: translate(-50%, -50%) scale(1); }
 }
 
 .speaking {
@@ -320,27 +386,239 @@ video.avatar-base {
 
 .viseme-image.cartoon-viseme {
     position: absolute;
-    top:47%; /* Adjust as needed to position the mouth */
-    left: 49%; /* Adjust as needed to position the mouth */
+    top: 47%;
+    left: 49%;
     transform: translate(-50%, -50%);
-    width: 20%; /* Adjust size as needed */
+    width: 20%; /* Base width for desktop */
     height: auto;
-    z-index: 1;
+    z-index: 2;
 }
 
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+    .face-container {
+        max-width: 500px;
+    }
 
+    .viseme-image.cartoon-viseme {
+        width: 22%; /* Slightly larger for medium screens */
+    }
+}
 
+@media screen and (max-width: 768px) {
+    .face-container {
+        max-width: 400px;
+    }
 
+    .viseme-image.cartoon-viseme {
+        width: 25%; /* Larger for tablets */
+        top: 47%;
+    }
+}
 
+@media screen and (max-width: 480px) {
+    .face-container {
+        max-width: 300px;
+    }
 
+    .viseme-image.cartoon-viseme {
+        width: 28%; /* Even larger for mobile */
+        top: 47%;
+    }
+}
 
+/* Portrait orientation specific adjustments */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .face-container {
+        max-width: 90vw;
+    }
 
+    .viseme-image.cartoon-viseme {
+        width: 25%;
+    }
+}
 
+/* Landscape orientation specific adjustments */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .face-container {
+        max-width: 50vh;
+    }
 
+    .viseme-image.cartoon-viseme {
+        width: 22%;
+    }
+}
 
+/* For very small screens */
+@media screen and (max-width: 320px) {
+    .face-container {
+        max-width: 250px;
+    }
 
+    .viseme-image.cartoon-viseme {
+        width: 30%;
+    }
+}
 
+/* For larger screens */
+@media screen and (min-width: 1440px) {
+    .face-container {
+        max-width: 700px;
+    }
 
+    .viseme-image.cartoon-viseme {
+        width: 18%; /* Slightly smaller proportion for larger screens */
+    }
+}
+
+/* Add compression for specific visemes */
+.viseme-compressed .avatar-base {
+    transform: scaleX(0.95);
+}
+
+.viseme-compressed .cartoon-viseme {
+    transform: translate(-50%, -50%) scaleX(1.1);
+}
+
+/* Add cheek compression animation */
+@keyframes cheekCompress {
+    0% { transform: scaleX(1); }
+    50% { transform: scaleX(0.95); }
+    100% { transform: scaleX(1); }
+}
+
+.cheek-animation {
+    animation: cheekCompress 0.3s ease-in-out;
+}
+
+.cheek-left, .cheek-right {
+    position: absolute;
+    height: 30%;
+    width: 20%;
+    top: 45%;
+    transition: transform 0.2s ease-out;
+}
+
+.cheek-left {
+    left: 25%;
+    transform-origin: right center;
+}
+
+.cheek-right {
+    right: 25%;
+    transform-origin: left center;
+}
+
+.viseme-compressed .cheek-left {
+    transform: translateX(10%) scaleX(0.9);
+}
+
+.viseme-compressed .cheek-right {
+    transform: translateX(-10%) scaleX(0.9);
+}
+
+.mouth-area {
+    position: absolute;
+    width: 30%;
+    height: 20%;
+    left: 35%;
+    top: 45%;
+    transform-origin: center;
+    transition: all 0.2s ease-out;
+}
+
+.viseme-compressed .mouth-area {
+    transform: scaleX(1.1) scaleY(0.95);
+}
+
+/* Animation for lip pulling */
+@keyframes lipPull {
+    0% { transform: scaleX(1); }
+    50% { transform: scaleX(1.1); }
+    100% { transform: scaleX(1); }
+}
+
+.lip-animation {
+    animation: lipPull 0.3s ease-in-out;
+}
+
+.blink-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+    object-fit: contain;
+}
+
+.blink-overlay.show {
+    opacity: 1;
+}
+
+.blink-overlay.hide {
+    opacity: 0;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.avatar-base {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .face-container {
+        max-width: 100%; /* Full width on mobile */
+        aspect-ratio: 1; /* Keep square ratio */
+    }
+
+    .viseme-image.cartoon-viseme {
+        width: 25%; /* Slightly larger mouth on mobile */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .faces-container {
+        padding: 5px;
+    }
+
+    .face-container {
+        border-radius: 10px;
+    }
+
+    .viseme-image.cartoon-viseme {
+        width: 30%; /* Even larger mouth for very small screens */
+    }
+}
+
+/* Portrait orientation specific adjustments */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .face-container {
+        max-width: 90vw;
+        height: auto;
+    }
+}
+
+/* Landscape orientation specific adjustments */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .face-container {
+        max-width: 50vh;
+        height: auto;
+    }
+}
+
+/* Prevent overflow issues */
+* {
+    box-sizing: border-box;
+}
 
 
 
