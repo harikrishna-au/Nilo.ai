@@ -5,11 +5,13 @@
 ![Built With](https://img.shields.io/badge/Built%20with-React%2C%20Node%2C%20Gemini-blue)
 
 > Your smart AI avatar – multilingual, real-time, and always ready to talk.
-https://github.com/user-attachments/assets/2381fa1d-f45a-4d60-bc39-0ae262d58b11
+
 
 ---
 
 ## 🌐 About the Project
+
+https://github.com/user-attachments/assets/2381fa1d-f45a-4d60-bc39-0ae262d58b11
 
 **Nilo AI** is a real-time, multilingual avatar platform that brings **human-like conversations** to life using voice and text. Whether it’s customer support, virtual onboarding, or smart education, Nilo AI offers 24/7 intelligent, emotionally-aware interactions that reduce costs and boost productivity.
 
