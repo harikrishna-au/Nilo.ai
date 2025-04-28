@@ -34,6 +34,10 @@
 
 ## 🛠️ Tech Stack
 
+https://github.com/user-attachments/assets/2381fa1d-f45a-4d60-bc39-0ae262d58b11
+
+
+
 **Frontend**
 - React.js
 - Viseme JS for lip animations
