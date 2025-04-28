@@ -5,6 +5,7 @@
 ![Built With](https://img.shields.io/badge/Built%20with-React%2C%20Node%2C%20Gemini-blue)
 
 > Your smart AI avatar – multilingual, real-time, and always ready to talk.
+https://github.com/user-attachments/assets/2381fa1d-f45a-4d60-bc39-0ae262d58b11
 
 ---
 
@@ -34,7 +35,6 @@
 
 ## 🛠️ Tech Stack
 
-https://github.com/user-attachments/assets/2381fa1d-f45a-4d60-bc39-0ae262d58b11
 
 
 
