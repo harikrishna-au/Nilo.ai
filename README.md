@@ -6,6 +6,10 @@
 
 > Your smart AI avatar – multilingual, real-time, and always ready to talk.
 
+
+https://github.com/user-attachments/assets/147c9696-a93c-45b3-aa58-43050d5bd748
+
+
 ---
 
 ## 🌐 About the Project
