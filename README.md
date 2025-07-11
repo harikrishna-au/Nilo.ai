@@ -7,7 +7,10 @@
 > Your smart AI avatar – multilingual, real-time, and always ready to talk.
 
 
-https://github.com/user-attachments/assets/147c9696-a93c-45b3-aa58-43050d5bd748
+## 🎥 Demo Video
+
+[![Watch the Demo](https://img.shields.io/badge/▶%20Watch%20Demo%20Video-blue)](https://github.com/user-attachments/assets/147c9696-a93c-45b3-aa58-43050d5bd748)
+
 
 
 ---
